@@ -1,6 +1,6 @@
 #include "decoder.h"
 
-int decoder_reorder_pts = -1;
+extern int decoder_reorder_pts;
 
 void decoder_init(Decoder *d, AVCodecContext *avctx, PacketQueue *queue, SDL_cond *empty_queue_cond) {
     memset(d, 0, sizeof(Decoder));
@@ -115,4 +115,15 @@ void decoder_abort(Decoder *d, FrameQueue *fq)
     SDL_WaitThread(d->decoder_tid, NULL);
     d->decoder_tid = NULL;
     packet_queue_flush(d->queue);
+}
+
+int decoder_start(Decoder *d, int (*fn)(void *), const char *thread_name, void* arg)
+{
+    packet_queue_start(d->queue);
+    d->decoder_tid = SDL_CreateThread(fn, thread_name, arg);
+    if (!d->decoder_tid) {
+        av_log(NULL, AV_LOG_ERROR, "SDL_CreateThread(): %s\n", SDL_GetError());
+        return AVERROR(ENOMEM);
+    }
+    return 0;
 }

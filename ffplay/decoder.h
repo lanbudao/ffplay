@@ -4,8 +4,6 @@
 #include "libavformat/avformat.h"
 #include "frame_queue.h"
 
-extern int decoder_reorder_pts;
-
 typedef struct Decoder {
     AVPacket pkt;
     PacketQueue *queue;
@@ -28,5 +26,7 @@ int decoder_decode_frame(Decoder *d, AVFrame *frame, AVSubtitle *sub);
 void decoder_destroy(Decoder *d);
 
 void decoder_abort(Decoder *d, FrameQueue *fq);
+
+int decoder_start(Decoder *d, int (*fn)(void *), const char *thread_name, void* arg);
 
 #endif // DECODER_H

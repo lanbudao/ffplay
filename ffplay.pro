@@ -30,6 +30,7 @@ SOURCES += \
     ffplay/cmdutils.c \
     ffplay/decoder.c \
     ffplay/frame_queue.c \
+    ffplay/options.c \
     ffplay/packet_queue.c
 
 HEADERS += \
@@ -38,4 +39,6 @@ HEADERS += \
     ffplay/config.h \
     ffplay/decoder.h \
     ffplay/frame_queue.h \
+    ffplay/global.h \
+    ffplay/options.h \
     ffplay/packet_queue.h
