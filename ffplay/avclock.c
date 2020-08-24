@@ -1,6 +1,7 @@
 #include "avclock.h"
 
 #include <math.h>
+#include "libavutil/time.h"
 
 double get_clock(Clock *c)
 {
