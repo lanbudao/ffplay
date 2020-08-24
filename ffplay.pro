@@ -31,7 +31,8 @@ SOURCES += \
     ffplay/decoder.c \
     ffplay/frame_queue.c \
     ffplay/options.c \
-    ffplay/packet_queue.c
+    ffplay/packet_queue.c \
+    ffplay/player.c
 
 HEADERS += \
     ffplay/avclock.h \
@@ -41,4 +42,6 @@ HEADERS += \
     ffplay/frame_queue.h \
     ffplay/global.h \
     ffplay/options.h \
-    ffplay/packet_queue.h
+    ffplay/packet_queue.h \
+    ffplay/player.h \
+    ffplay/video_state.h
