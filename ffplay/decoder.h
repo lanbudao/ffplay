@@ -2,6 +2,7 @@
 #define DECODER_H
 
 #include "libavformat/avformat.h"
+#include "libavcodec/avcodec.h"
 #include "frame_queue.h"
 
 typedef struct Decoder {
