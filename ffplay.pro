@@ -26,19 +26,23 @@ QMAKE_LIBS_QT_ENGTRY -= -lqtmain
 
 SOURCES += \
     $$PWD/ffplay/ffplay.c \
+    ffplay/audio.c \
     ffplay/avclock.c \
     ffplay/cmdutils.c \
     ffplay/decoder.c \
+    ffplay/filter.c \
     ffplay/frame_queue.c \
     ffplay/options.c \
     ffplay/packet_queue.c \
     ffplay/player.c
 
 HEADERS += \
+    ffplay/audio.h \
     ffplay/avclock.h \
     ffplay/cmdutils.h \
     ffplay/config.h \
     ffplay/decoder.h \
+    ffplay/filter.h \
     ffplay/frame_queue.h \
     ffplay/global.h \
     ffplay/options.h \
