@@ -34,7 +34,9 @@ SOURCES += \
     ffplay/frame_queue.c \
     ffplay/options.c \
     ffplay/packet_queue.c \
-    ffplay/player.c
+    ffplay/player.c \
+    ffplay/render.c \
+    ffplay/video.c
 
 HEADERS += \
     ffplay/audio.h \

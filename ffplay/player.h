@@ -4,8 +4,6 @@
 #include "options.h"
 #include "video_state.h"
 
-#define FF_QUIT_EVENT    (SDL_USEREVENT + 2)
-
 extern int64_t audio_callback_time;
 extern SDL_Window *window;
 extern SDL_Renderer *renderer;
