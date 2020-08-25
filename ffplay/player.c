@@ -532,11 +532,6 @@ static void video_audio_display(VideoState *s)
     }
 }
 
-extern const struct TextureFormatEntry {
-    enum AVPixelFormat format;
-    int texture_fmt;
-} sdl_texture_format_map[];
-extern int texture_fmt_elems;
 void get_sdl_pix_fmt_and_blendmode(int format, Uint32 *sdl_pix_fmt, SDL_BlendMode *sdl_blendmode)
 {
     int i;

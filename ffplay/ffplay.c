@@ -36,6 +36,7 @@
 #include "video_state.h"
 #include "options.h"
 #include "player.h"
+#include "filter.h"
 #include "cmdutils.h"
 
 const char program_name[] = "ffplay";

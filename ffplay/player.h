@@ -9,7 +9,6 @@
 extern int64_t audio_callback_time;
 extern SDL_Window *window;
 extern SDL_Renderer *renderer;
-extern SDL_RendererInfo renderer_info;
 
 VideoState *stream_open(const char *filename, AVInputFormat *iformat);
 

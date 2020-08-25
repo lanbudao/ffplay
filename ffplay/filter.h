@@ -5,6 +5,15 @@
 #include "libavfilter/avfilter.h"
 #include "video_state.h"
 
+typedef struct TextureFormatEntry {
+    enum AVPixelFormat format;
+    int texture_fmt;
+} TextureFormatEntry;
+
+extern const struct TextureFormatEntry sdl_texture_format_map[];
+extern const int texture_fmt_elems;
+extern SDL_RendererInfo renderer_info;
+
 #if CONFIG_AVFILTER
 int configure_filtergraph(AVFilterGraph *graph, const char *filtergraph,
                                  AVFilterContext *source_ctx, AVFilterContext *sink_ctx);

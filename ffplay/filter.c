@@ -4,10 +4,7 @@
 #include "libavutil/avstring.h"
 #include "cmdutils.h"
 
-const struct TextureFormatEntry {
-    enum AVPixelFormat format;
-    int texture_fmt;
-} sdl_texture_format_map[] = {
+const struct TextureFormatEntry sdl_texture_format_map[] = {
     { AV_PIX_FMT_RGB8,           SDL_PIXELFORMAT_RGB332 },
     { AV_PIX_FMT_RGB444,         SDL_PIXELFORMAT_RGB444 },
     { AV_PIX_FMT_RGB555,         SDL_PIXELFORMAT_RGB555 },
