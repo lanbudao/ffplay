@@ -36,10 +36,10 @@ SOURCES += \
     ffplay/packet_queue.c \
     ffplay/player.c \
     ffplay/render.c \
+    ffplay/subtitle.c \
     ffplay/video.c
 
 HEADERS += \
-    ffplay/audio.h \
     ffplay/avclock.h \
     ffplay/cmdutils.h \
     ffplay/config.h \
