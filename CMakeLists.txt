@@ -3,8 +3,7 @@ include(3rdparty.cmake)
 
 set(MODULE ffplay)
 project(${MODULE})
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-#set(CMAKE_BUILD_TYPE Debug)
+
 # Set Version
 set(PLAYER_MAJOR 1)
 set(PLAYER_MINOR 0)
@@ -21,12 +20,17 @@ include_directories(${HEADERS})
 aux_source_directory(ffplay/. SOURCES)
 add_executable(${MODULE} ${SOURCES} ${HEADERS})
 
-message(${FFMPEG_LIB})
-message(${SDL_LIB})
-message(${CMAKE_SOURCE_DIR})
-message(${CMAKE_CURRENT_SOURCE_DIR})
-list(APPEND EXTRA_LIBS avformat avcodec swscale avutil avfilter avdevice swresample)
-list(APPEND EXTRA_LIBS SDL2 SDL2main)
-link_directories(${FFMPEG_LIB})
-link_directories(${SDL_LIB})
-target_link_libraries(${MODULE} avformat)
+find_library(LIB_AVFORMAT avformat ${FFMPEG_LIB})
+find_library(LIB_AVCODEC avcodec ${FFMPEG_LIB})
+find_library(LIB_AVUTIL avutil ${FFMPEG_LIB})
+find_library(LIB_AVSCALE swscale ${FFMPEG_LIB})
+find_library(LIB_AVFILTER avfilter ${FFMPEG_LIB})
+find_library(LIB_AVDEVICE avdevice ${FFMPEG_LIB})
+find_library(LIB_SWRESAMPLE swresample ${FFMPEG_LIB})
+find_library(LIB_SDL2 SDL2 ${SDL_LIB})
+find_library(LIB_SD2MAIN SDL2main ${SDLMAIN_LIB})
+
+target_link_libraries(${MODULE} ${LIB_AVFORMAT} ${LIB_AVCODEC} ${LIB_AVUTIL}
+                                ${LIB_AVSCALE} ${LIB_AVFILTER} ${LIB_AVDEVICE}
+                                ${LIB_SWRESAMPLE} ${LIB_SDL2} ${LIB_SDL2MAIN})
+
