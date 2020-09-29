@@ -14,6 +14,7 @@
 #include "libavutil/time.h"
 #include "libavdevice/avdevice.h"
 #include "libswresample/swresample.h"
+#include "soundtouch/ijksoundtouch_wrap.h"
 
 #include "filter.h"
 
@@ -140,6 +141,8 @@ VideoState *stream_open(const char *filename, AVInputFormat *iformat)
     is->iformat = iformat;
     is->ytop    = 0;
     is->xleft   = 0;
+
+    is->handle = ijk_soundtouch_create();
 
     /* start video display */
     if (frame_queue_init(&is->pictq, &is->videoq, VIDEO_PICTURE_QUEUE_SIZE, 1) < 0)
@@ -869,6 +872,9 @@ void stream_close(VideoState *is)
     SDL_DestroyCond(is->continue_read_thread);
     sws_freeContext(is->img_convert_ctx);
     sws_freeContext(is->sub_convert_ctx);
+    if (is->handle != NULL) {
+        ijk_soundtouch_destroy(is->handle);
+    }
     av_free(is->filename);
     if (is->vis_texture)
         SDL_DestroyTexture(is->vis_texture);

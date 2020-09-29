@@ -73,8 +73,11 @@ typedef struct VideoState {
     int audio_hw_buf_size;
     uint8_t *audio_buf;
     uint8_t *audio_buf1;
+    void* handle;
+    short* audio_new_buf;
     unsigned int audio_buf_size; /* in bytes */
     unsigned int audio_buf1_size;
+    unsigned int audio_new_buf_size;
     int audio_buf_index; /* in bytes */
     int audio_write_buf_size;
     int audio_volume;
@@ -105,6 +108,7 @@ typedef struct VideoState {
     AVStream *subtitle_st;
     PacketQueue subtitleq;
 
+    /* Record the relative time of current video frame */
     double frame_timer;
     double frame_last_returned_time;
     double frame_last_filter_delay;

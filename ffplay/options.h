@@ -24,6 +24,7 @@ extern int subtitle_disable;
 extern char* wanted_stream_spec[AVMEDIA_TYPE_NB];
 extern int seek_by_bytes;
 extern float seek_interval;
+extern float playback_rate;
 extern int display_disable;
 extern int borderless;
 extern int alwaysontop;

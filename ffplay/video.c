@@ -15,9 +15,9 @@ static double vp_duration(VideoState *is, Frame *vp, Frame *nextvp) {
     if (vp->serial == nextvp->serial) {
         double duration = nextvp->pts - vp->pts;
         if (isnan(duration) || duration <= 0 || duration > is->max_frame_duration)
-            return vp->duration;
+            return vp->duration / playback_rate;
         else
-            return duration;
+            return duration / playback_rate;
     } else {
         return 0.0;
     }
@@ -180,16 +180,19 @@ retry:
             if (is->paused)
                 goto display;
 
-            /* compute nominal last_duration */
+            /* compute nominal last_duration equals the pts of next frame minus the pts of current frame */
             last_duration = vp_duration(is, lastvp, vp);
+            /* compute the time of current frame to display*/
             delay = compute_target_delay(last_duration, is);
 
-            time= av_gettime_relative()/1000000.0;
+            time = av_gettime_relative() / 1000000.0;
+            /* If the display time of last frame is not enough, continue to display last frame */
             if (time < is->frame_timer + delay) {
                 *remaining_time = FFMIN(is->frame_timer + delay - time, *remaining_time);
                 goto display;
             }
 
+            /* Set frame_time as the start time of current frame, also is the end time of last frame */
             is->frame_timer += delay;
             if (delay > 0 && time - is->frame_timer > AV_SYNC_THRESHOLD_MAX)
                 is->frame_timer = time;
@@ -199,10 +202,13 @@ retry:
                 update_video_pts(is, vp->pts, vp->pos, vp->serial);
             SDL_UnlockMutex(is->pictq.mutex);
 
+            /* Check whether need to drop frames */
             if (frame_queue_nb_remaining(&is->pictq) > 1) {
                 Frame *nextvp = frame_queue_peek_next(&is->pictq);
                 duration = vp_duration(is, vp, nextvp);
-                if(!is->step && (framedrop>0 || (framedrop && get_master_sync_type(is) != AV_SYNC_VIDEO_MASTER)) && time > is->frame_timer + duration){
+                if(!is->step
+                        && (framedrop > 0 || (framedrop && get_master_sync_type(is) != AV_SYNC_VIDEO_MASTER))
+                        && (time > is->frame_timer + duration)){
                     is->frame_drops_late++;
                     frame_queue_next(&is->pictq);
                     goto retry;
@@ -283,7 +289,7 @@ display:
 
             av_bprint_init(&buf, 0, AV_BPRINT_SIZE_AUTOMATIC);
             av_bprintf(&buf,
-                      "%7.2f %s:%7.3f fd=%4d aq=%5dKB vq=%5dKB sq=%5dB f=%"PRId64"/%"PRId64"   \r",
+                      "%7.2f %s:%7.3f fd=%4d aq=%5dKB vq=%5dKB sq=%5dB f=%"PRId64"/%"PRId64" frame timer: %7.2f-%7.2f   \r",
                       get_master_clock(is),
                       (is->audio_st && is->video_st) ? "A-V" : (is->video_st ? "M-V" : (is->audio_st ? "M-A" : "   ")),
                       av_diff,
@@ -292,8 +298,10 @@ display:
                       vqsize / 1024,
                       sqsize,
                       is->video_st ? is->viddec.avctx->pts_correction_num_faulty_dts : 0,
-                      is->video_st ? is->viddec.avctx->pts_correction_num_faulty_pts : 0);
+                      is->video_st ? is->viddec.avctx->pts_correction_num_faulty_pts : 0,
+                      is->frame_timer, av_gettime_relative() / 1000000.0);
 
+//            av_bprintf(&buf, "frame timer: %7.2f\r", is->frame_timer);
             if (show_status == 1 && AV_LOG_INFO > av_log_get_level())
                 fprintf(stderr, "%s", buf.str);
             else

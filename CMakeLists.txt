@@ -15,9 +15,11 @@ include_directories(${FFMPEG_INCLUDE} ${SDL_INCLUDE})
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin)
 
 file(GLOB HEADERS ${CMAKE_SOURCE_DIR}/ffplay/*.h)
+file(GLOB HEADERS ${CMAKE_SOURCE_DIR}/ffplay/soundtouch/*.h)
 include_directories(${HEADERS})
 
 aux_source_directory(ffplay/. SOURCES)
+aux_source_directory(ffplay/soundtouch/. SOURCES)
 add_executable(${MODULE} ${SOURCES} ${HEADERS})
 
 find_library(LIB_AVFORMAT avformat ${FFMPEG_LIB})

@@ -18,6 +18,8 @@ int decoder_decode_frame(Decoder *d, AVFrame *frame, AVSubtitle *sub) {
         AVPacket pkt;
 
         if (d->queue->serial == d->pkt_serial) {
+            /* Read the decoded frames in a loop, because the audio may decode many audio frames
+               after sending a data packet until it returns AVERROR(EAGAIN) */
             do {
                 if (d->queue->abort_request)
                     return -1;

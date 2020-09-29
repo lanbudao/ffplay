@@ -4,6 +4,7 @@
 
 #include "libavutil/time.h"
 #include "libswresample/swresample.h"
+#include "soundtouch/ijksoundtouch_wrap.h"
 
 /* Minimum SDL audio buffer size, in samples. */
 #define SDL_AUDIO_MIN_BUFFER_SIZE 512
@@ -112,10 +113,11 @@ static int audio_decode_frame(VideoState *is)
     av_unused double audio_clock0;
     int wanted_nb_samples;
     Frame *af;
+    int translate_time = 1;
 
     if (is->paused)
         return -1;
-
+reload:
     do {
 #if defined(_WIN32)
         while (frame_queue_nb_remaining(&is->sampq) == 0) {
@@ -141,7 +143,8 @@ static int audio_decode_frame(VideoState *is)
     if (af->frame->format        != is->audio_src.fmt            ||
         dec_channel_layout       != is->audio_src.channel_layout ||
         af->frame->sample_rate   != is->audio_src.freq           ||
-        (wanted_nb_samples       != af->frame->nb_samples && !is->swr_ctx)) {
+        (wanted_nb_samples       != af->frame->nb_samples && !is->swr_ctx) ||
+            playback_rate != 1.0f) {
         swr_free(&is->swr_ctx);
         is->swr_ctx = swr_alloc_set_opts(NULL,
                                          is->audio_tgt.channel_layout, is->audio_tgt.fmt, is->audio_tgt.freq,
@@ -192,7 +195,28 @@ static int audio_decode_frame(VideoState *is)
                 swr_free(&is->swr_ctx);
         }
         is->audio_buf = is->audio_buf1;
-        resampled_data_size = len2 * is->audio_tgt.channels * av_get_bytes_per_sample(is->audio_tgt.fmt);
+//        resampled_data_size = len2 * is->audio_tgt.channels * av_get_bytes_per_sample(is->audio_tgt.fmt);
+        int bytes_per_sample = av_get_bytes_per_sample(is->audio_tgt.fmt);
+        resampled_data_size = len2 * is->audio_tgt.channels * bytes_per_sample;
+#if 1
+        if (playback_rate != 1.0f && !is->abort_request) {
+            av_fast_malloc(&is->audio_new_buf, &is->audio_new_buf_size, out_size * translate_time);
+            for (int i = 0; i < (resampled_data_size / 2); i++)
+            {
+                is->audio_new_buf[i] = (is->audio_buf1[i * 2] | (is->audio_buf1[i * 2 + 1] << 8));
+            }
+
+            int ret_len = ijk_soundtouch_translate(is->handle, is->audio_new_buf, (float)(playback_rate), (float)(1.0f/playback_rate),
+                    resampled_data_size / 2, bytes_per_sample, is->audio_tgt.channels, af->frame->sample_rate);
+            if (ret_len > 0) {
+                is->audio_buf = (uint8_t*)is->audio_new_buf;
+                resampled_data_size = ret_len;
+            } else {
+                translate_time++;
+                goto reload;
+            }
+        }
+#endif
     } else {
         is->audio_buf = af->frame->data[0];
         resampled_data_size = data_size;
@@ -256,7 +280,12 @@ static void sdl_audio_callback(void *opaque, Uint8 *stream, int len)
     is->audio_write_buf_size = is->audio_buf_size - is->audio_buf_index;
     /* Let's assume the audio driver that is used by SDL has two periods. */
     if (!isnan(is->audio_clock)) {
-        set_clock_at(&is->audclk, is->audio_clock - (double)(2 * is->audio_hw_buf_size + is->audio_write_buf_size) / is->audio_tgt.bytes_per_sec, is->audio_clock_serial, audio_callback_time / 1000000.0);
+        set_clock_at(&is->audclk,
+                     is->audio_clock -
+                        (double)(2 * is->audio_hw_buf_size + is->audio_write_buf_size) /
+                        is->audio_tgt.bytes_per_sec,
+                     is->audio_clock_serial,
+                     audio_callback_time / 1000000.0);
         sync_clock_to_slave(&is->extclk, &is->audclk);
     }
 }

@@ -24,6 +24,7 @@ int subtitle_disable;
 char* wanted_stream_spec[AVMEDIA_TYPE_NB] = {0};
 int seek_by_bytes = -1;
 float seek_interval = 10;
+float playback_rate = 1.0;
 int display_disable;
 int borderless;
 int alwaysontop;
@@ -192,6 +193,7 @@ static const OptionDef options[] = {
     { "t", HAS_ARG, { .func_arg = opt_duration }, "play  \"duration\" seconds of audio/video", "duration" },
     { "bytes", OPT_INT | HAS_ARG, { &seek_by_bytes }, "seek by bytes 0=off 1=on -1=auto", "val" },
     { "seek_interval", OPT_FLOAT | HAS_ARG, { &seek_interval }, "set seek interval for left/right keys, in seconds", "seconds" },
+    { "speed", OPT_FLOAT | HAS_ARG, { &playback_rate }, "set playback rate for media, Effective range [0.5~2.0]"},
     { "nodisp", OPT_BOOL, { &display_disable }, "disable graphical display" },
     { "noborder", OPT_BOOL, { &borderless }, "borderless window" },
     { "alwaysontop", OPT_BOOL, { &alwaysontop }, "window always on top" },
