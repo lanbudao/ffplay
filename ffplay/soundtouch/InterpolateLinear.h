@@ -1,15 +1,11 @@
 ////////////////////////////////////////////////////////////////////////////////
-///
+/// 
 /// Linear interpolation routine.
 ///
 /// Author        : Copyright (c) Olli Parviainen
 /// Author e-mail : oparviai 'at' iki.fi
 /// SoundTouch WWW: http://www.surina.net/soundtouch
 ///
-////////////////////////////////////////////////////////////////////////////////
-//
-// $Id: InterpolateLinear.h 225 2015-07-26 14:45:48Z oparviai $
-//
 ////////////////////////////////////////////////////////////////////////////////
 //
 // License :
@@ -42,7 +38,7 @@
 namespace soundtouch
 {
 
-/// Linear transposer class that uses integer arithmetics
+/// Linear transposer class that uses integer arithmetic
 class InterpolateLinearInteger : public TransposerBase
 {
 protected:
@@ -51,23 +47,28 @@ protected:
 
     virtual void resetRegisters();
 
-    virtual int transposeMono(SAMPLETYPE *dest,
-                       const SAMPLETYPE *src,
+    virtual int transposeMono(SAMPLETYPE *dest, 
+                       const SAMPLETYPE *src, 
                        int &srcSamples);
-    virtual int transposeStereo(SAMPLETYPE *dest,
-                         const SAMPLETYPE *src,
+    virtual int transposeStereo(SAMPLETYPE *dest, 
+                         const SAMPLETYPE *src, 
                          int &srcSamples);
     virtual int transposeMulti(SAMPLETYPE *dest, const SAMPLETYPE *src, int &srcSamples);
 public:
     InterpolateLinearInteger();
 
-    /// Sets new target rate. Normal rate = 1.0, smaller values represent slower
+    /// Sets new target rate. Normal rate = 1.0, smaller values represent slower 
     /// rate, larger faster rates.
     virtual void setRate(double newRate);
+
+    int getLatency() const
+    {
+        return 0;
+    }
 };
 
 
-/// Linear transposer class that uses floating point arithmetics
+/// Linear transposer class that uses floating point arithmetic
 class InterpolateLinearFloat : public TransposerBase
 {
 protected:
@@ -75,16 +76,21 @@ protected:
 
     virtual void resetRegisters();
 
-    virtual int transposeMono(SAMPLETYPE *dest,
-                       const SAMPLETYPE *src,
+    virtual int transposeMono(SAMPLETYPE *dest, 
+                       const SAMPLETYPE *src, 
                        int &srcSamples);
-    virtual int transposeStereo(SAMPLETYPE *dest,
-                         const SAMPLETYPE *src,
+    virtual int transposeStereo(SAMPLETYPE *dest, 
+                         const SAMPLETYPE *src, 
                          int &srcSamples);
     virtual int transposeMulti(SAMPLETYPE *dest, const SAMPLETYPE *src, int &srcSamples);
 
 public:
     InterpolateLinearFloat();
+
+    int getLatency() const
+    {
+        return 0;
+    }
 };
 
 }
